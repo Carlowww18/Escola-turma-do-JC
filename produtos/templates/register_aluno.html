@@ -1,0 +1,143 @@
+{% extends 'home.html'%}
+
+{% load static %}
+
+{% block titulo %}
+<title>Register</title>
+{% endblock %}
+
+{% block conteudo %}
+<body style="min-width: 372px;">
+    {% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger border-bottom shadow-sm mb-3">
+        <div class="container">
+            <a class="navbar-brand" href=""><strong>Escola turma do JC</strong></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white">Home</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="align-self-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="" class="nav-link text-white">{{usuario_id}}</a>
+                    </li>
+                    {% if not usuario_logado %}
+                    <li class="nav-item">
+                        <a href="{% url 'cadastro'%}" class="nav-link text-white">Quero me cadastrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
+                    </li>
+                    {% endif %}
+                    {% if usuario_logado %}
+                    <li class="nav-item">
+                        <a href="{% url 'sair' %}" class="nav-link text-white">Logout</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" id="navbarDropdownMenuLink"
+                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>    
+                           Cadastros
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            
+                            <a class="dropdown-item" href="{% url 'register' %}">Aluno</a>
+                            <hr>
+                            <a class="dropdown-item" href="">Administrador</a>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+    {% endblock %}
+
+<main>
+    <div class="container mt-5">
+        <h2 style="text-align: center;">Register</h2><br><br>
+        <form method="POST" action="{% url 'create' %}">
+            {% csrf_token %}        
+            <br>
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+                {% else %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>   
+                {% endif %}
+            {% endfor %}
+
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{field.id_for_label}}" class="form-label">{{field.label}}</label>
+                    {{field}}
+
+                    {{field.errors}}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</main>
+<script>
+    /* Máscaras CPF */
+    const input = document.getElementById("id_cpf");
+
+    input.addEventListener("keyup", formatarCPF);
+
+    function formatarCPF(e){
+
+    var v=e.target.value.replace(/\D/g,"");
+
+    v=v.replace(/(\d{3})(\d)/,"$1-$2");
+
+    v=v.replace(/(\d{3})(\d)/,"$1-$2");
+
+    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+    e.target.value = v;
+
+    }
+
+    /* Máscaras TELEFONE */
+    function mascara(o,f){
+        v_obj=o
+        v_fun=f
+        setTimeout("execmascara()",1)
+    }
+    function execmascara(){
+        v_obj.value=v_fun(v_obj.value)
+    }
+    function mtel(v){
+        v=v.replace(/\D/g,""); //Remove tudo o que não é dígito
+        v=v.replace(/^(\d{2})(\d)/g,"($1)$2 "); //Coloca parênteses em volta dos dois primeiros dígitos
+        v=v.replace(/(\d)(\d{4})$/,"$1-$2"); //Coloca hífen entre o quarto e o quinto dígitos
+        return v;
+    }
+    function id( el ){
+        return document.getElementById( el );
+    }
+    window.onload = function(){
+        id('id_telefone').onkeyup = function(){
+            mascara( this, mtel );
+        }
+    }
+</script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+{% endblock %}

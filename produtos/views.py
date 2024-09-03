@@ -22,12 +22,18 @@ def register_aluno(request):
                                                   'usuario_id': usuario,
                                                   'form': form})
 
+
+def register_admin(request):
+    return render(request, 'register_admin.html')
+
+
 def register_create(request):
     if not request.POST:
         raise Http404()      
     POST = request.POST
     request.session['register'] = POST
     form = RegisterForm(request.POST)
+    
     idade = request.POST.get('idade')
 
     if idade == '':

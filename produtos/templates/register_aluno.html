@@ -49,7 +49,7 @@
                             
                             <a class="dropdown-item" href="{% url 'register' %}">Aluno</a>
                             <hr>
-                            <a class="dropdown-item" href="">Administrador</a>
+                            <a class="dropdown-item" href="{% url 'register_admin'%}">Administrador</a>
                         </div>
                     </li>
                     {% endif %}
@@ -63,7 +63,7 @@
 
 <main>
     <div class="container mt-5">
-        <h2 style="text-align: center;">Register</h2><br><br>
+        <h2 style="text-align: center;">Student Registration</h2><br><br>
         <form method="POST" action="{% url 'create' %}">
             {% csrf_token %}        
             <br>
@@ -80,14 +80,21 @@
             {% endfor %}
 
 
+            <div class="row">
             {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{field.id_for_label}}" class="form-label">{{field.label}}</label>
-                    {{field}}
-
-                    {{field.errors}}
+                <div class="col-md-4 mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <div class="input-group">
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div><br>
             <button type="submit" class="btn btn-primary">Enviar</button>
         </form>
     </div>
@@ -135,6 +142,77 @@
             mascara( this, mtel );
         }
     }
+    /* Máscaras DATAS */
+    function mascaraData(val) {
+        var pass = val.value;
+        var expr = /[0123456789]/;
+      
+        for (i = 0; i < pass.length; i++) {
+          // charAt -> retorna o caractere posicionado no índice especificado
+          var lchar = val.value.charAt(i);
+          var nchar = val.value.charAt(i + 1);
+      
+          if (i == 0) {
+            // search -> retorna um valor inteiro, indicando a posição do inicio da primeira
+            // ocorrência de expReg dentro de instStr. Se nenhuma ocorrencia for encontrada o método retornara -1
+            // instStr.search(expReg);
+            if ((lchar.search(expr) != 0) || (lchar > 3)) {
+              val.value = "";
+            }
+      
+          } else if (i == 1) {
+      
+            if (lchar.search(expr) != 0) {
+              // substring(indice1,indice2)
+              // indice1, indice2 -> será usado para delimitar a string
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+              continue;
+            }
+      
+            if ((nchar != '/') && (nchar != '')) {
+              var tst1 = val.value.substring(0, (i) + 1);
+      
+              if (nchar.search(expr) != 0)
+                var tst2 = val.value.substring(i + 2, pass.length);
+              else
+                var tst2 = val.value.substring(i + 1, pass.length);
+      
+              val.value = tst1 + '/' + tst2;
+            }
+      
+          } else if (i == 4) {
+      
+            if (lchar.search(expr) != 0) {
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+              continue;
+            }
+      
+            if ((nchar != '/') && (nchar != '')) {
+              var tst1 = val.value.substring(0, (i) + 1);
+      
+              if (nchar.search(expr) != 0)
+                var tst2 = val.value.substring(i + 2, pass.length);
+              else
+                var tst2 = val.value.substring(i + 1, pass.length);
+      
+              val.value = tst1 + '/' + tst2;
+            }
+          }
+      
+          if (i >= 6) {
+            if (lchar.search(expr) != 0) {
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+            }
+          }
+        }
+      
+        if (pass.length > 10)
+          val.value = val.value.substring(0, 10);
+        return true;
+      }
 </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

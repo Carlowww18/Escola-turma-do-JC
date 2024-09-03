@@ -18,14 +18,6 @@ class RegisterForm(forms.ModelForm):
         'placeholder': 'Ex.: Rua pereira, N°15'
     })
     )
-    idade = forms.CharField(
-        label='Idade:',
-        max_length=2,
-        required=True,
-        widget = forms.TextInput(attrs={
-        'placeholder': 'Ex.: 20'
-    })
-    )
     cpf = forms.CharField(
         label='CPF:',
         max_length=14,
@@ -50,6 +42,7 @@ class RegisterForm(forms.ModelForm):
         widget = forms.DateInput(attrs={
             'placeholder': 'Ex.:DD/MM/YYYY',
             'id': 'id_data',
+            'onkeypress':'mascaraData(this)',
         })
     )
     sexo = forms.ChoiceField(
@@ -78,7 +71,6 @@ class RegisterForm(forms.ModelForm):
         fields = {
             'nome_completo',
             'endereco',
-            'idade',
             'cpf',
             'telefone',
             'data_nascimento',

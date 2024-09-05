@@ -1,0 +1,230 @@
+{% extends 'home.html'%}
+
+{% load static %}
+
+{% block conteudo %}
+<body style="min-width: 372px;">
+    {% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger border-bottom shadow-sm mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <strong>Escola Turma do JC</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white">Home</a>
+                    </li>
+                </ul>
+    
+                <ul class="navbar-nav">
+                    {% if usuario_logado %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user" aria-hidden="true"></i> {{ usuario_id }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="">Meu Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'sair' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" id="navbarCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i> Cadastros
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCadastros">
+                            <li><a class="dropdown-item" href="{% url 'register_aluno' %}">Aluno</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'register_admin' %}">Administrador</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" id="navbarCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-book-open" aria-hidden="true"></i> Notas
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCadastros">
+                            <li><a class="dropdown-item" href="">Boletim</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="">Situação</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'cadastro' %}" class="nav-link text-white">Quero me cadastrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+<main>
+    <div class="container mt-5">
+        <h2 style="text-align: center;">Admin Registration</h2><br><br>
+        <form method="POST" action="{% url 'register_admin' %}">
+            {% csrf_token %}        
+            <br>
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+                {% else %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>   
+                {% endif %}
+            {% endfor %}
+
+
+            <div class="row">
+            {% for field in form %}
+                <div class="col-md-4 mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <div class="input-group">
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div><br>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</main>
+<script>
+    /* Máscaras CPF */
+    const input = document.getElementById("id_cpf");
+
+    input.addEventListener("keyup", formatarCPF);
+
+    function formatarCPF(e){
+
+    var v=e.target.value.replace(/\D/g,"");
+
+    v=v.replace(/(\d{3})(\d)/,"$1-$2");
+
+    v=v.replace(/(\d{3})(\d)/,"$1-$2");
+
+    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+    e.target.value = v;
+
+    }
+
+    /* Máscaras TELEFONE */
+    function mascara(o,f){
+        v_obj=o
+        v_fun=f
+        setTimeout("execmascara()",1)
+    }
+    function execmascara(){
+        v_obj.value=v_fun(v_obj.value)
+    }
+    function mtel(v){
+        v=v.replace(/\D/g,""); //Remove tudo o que não é dígito
+        v=v.replace(/^(\d{2})(\d)/g,"($1)$2 "); //Coloca parênteses em volta dos dois primeiros dígitos
+        v=v.replace(/(\d)(\d{4})$/,"$1-$2"); //Coloca hífen entre o quarto e o quinto dígitos
+        return v;
+    }
+    function id( el ){
+        return document.getElementById( el );
+    }
+    window.onload = function(){
+        id('id_telefone').onkeyup = function(){
+            mascara( this, mtel );
+        }
+    }
+    /* Máscaras DATAS */
+    function mascaraData(val) {
+        var pass = val.value;
+        var expr = /[0123456789]/;
+      
+        for (i = 0; i < pass.length; i++) {
+          // charAt -> retorna o caractere posicionado no índice especificado
+          var lchar = val.value.charAt(i);
+          var nchar = val.value.charAt(i + 1);
+      
+          if (i == 0) {
+            // search -> retorna um valor inteiro, indicando a posição do inicio da primeira
+            // ocorrência de expReg dentro de instStr. Se nenhuma ocorrencia for encontrada o método retornara -1
+            // instStr.search(expReg);
+            if ((lchar.search(expr) != 0) || (lchar > 3)) {
+              val.value = "";
+            }
+      
+          } else if (i == 1) {
+      
+            if (lchar.search(expr) != 0) {
+              // substring(indice1,indice2)
+              // indice1, indice2 -> será usado para delimitar a string
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+              continue;
+            }
+      
+            if ((nchar != '/') && (nchar != '')) {
+              var tst1 = val.value.substring(0, (i) + 1);
+      
+              if (nchar.search(expr) != 0)
+                var tst2 = val.value.substring(i + 2, pass.length);
+              else
+                var tst2 = val.value.substring(i + 1, pass.length);
+      
+              val.value = tst1 + '/' + tst2;
+            }
+      
+          } else if (i == 4) {
+      
+            if (lchar.search(expr) != 0) {
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+              continue;
+            }
+      
+            if ((nchar != '/') && (nchar != '')) {
+              var tst1 = val.value.substring(0, (i) + 1);
+      
+              if (nchar.search(expr) != 0)
+                var tst2 = val.value.substring(i + 2, pass.length);
+              else
+                var tst2 = val.value.substring(i + 1, pass.length);
+      
+              val.value = tst1 + '/' + tst2;
+            }
+          }
+      
+          if (i >= 6) {
+            if (lchar.search(expr) != 0) {
+              var tst1 = val.value.substring(0, (i));
+              val.value = tst1;
+            }
+          }
+        }
+      
+        if (pass.length > 10)
+          val.value = val.value.substring(0, 10);
+        return true;
+      }
+</script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+     <!-- Bootstrap JS and Popper.js -->
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</body>
+{% endblock %}

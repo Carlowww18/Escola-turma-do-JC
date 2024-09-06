@@ -59,7 +59,7 @@ def valida_login(request):
         return redirect('/login')
     elif len(usuario) > 0:
         request.session['usuario'] = usuario[0].id
-        return redirect('/produtos/home/')
+        return redirect('/cadastros/home/')
     
 def sair(request):
     request.session.flush()

@@ -8,73 +8,15 @@
 
 {% block conteudo %}
 <body style="min-width: 372px;">
-    {% block nav %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger border-bottom shadow-sm mb-3">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <strong>Escola Turma do JC</strong>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link text-white">Home</a>
-                    </li>
-                </ul>
     
-                <ul class="navbar-nav">
-                    {% if usuario_logado %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-user" aria-hidden="true"></i> {{ usuario_id }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="">Meu Perfil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'sair' %}">Logout</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" id="navbarCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-plus-square" aria-hidden="true"></i> Cadastros
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCadastros">
-                            <li><a class="dropdown-item" href="{% url 'register_aluno' %}">Aluno</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'register_admin' %}">Administrador</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" id="navbarCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-book-open" aria-hidden="true"></i> Notas
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCadastros">
-                            <li><a class="dropdown-item" href="">Boletim</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="">Situação</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a href="{% url 'cadastro' %}" class="nav-link text-white">Quero me cadastrar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% block nav %}
+    {% include "partials/nav.html" %}
     {% endblock %}
 
 <main>
     <div class="container mt-5">
-        <h2 style="text-align: center;">Student Registration</h2><br><br>
-        <form method="POST" action="{% url 'create_aluno' %}">
+        <h2 style="text-align: center;">Admin Registration</h2><br><br>
+        <form method="POST" action="{% url 'register_admin' %}">
             {% csrf_token %}        
             <br>
             {% for message in messages %}

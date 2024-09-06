@@ -3,6 +3,8 @@ from login.models import Usuarios
 from . forms import RegisterForm, RegisterAdmin
 from django.http import Http404
 from django.contrib import messages
+from cadastros.models import Aluno
+from django.urls import reverse
 
 def home(request):
     if request.session.get('usuario'):
@@ -18,7 +20,7 @@ def register_aluno(request):
     register_aluno = request.session.get('register_aluno', None)
     form = RegisterForm(register_aluno)
   
-    return render(request, 'register_aluno.html',{'usuario_logado': request.session.get('usuario'),
+    return render(request, 'register/register_aluno.html',{'usuario_logado': request.session.get('usuario'),
                                                   'usuario_id': usuario,
                                                   'form': form})
 
@@ -30,8 +32,12 @@ def create_aluno(request):
     form = RegisterForm(request.POST)
     
     idade = request.POST.get('idade')
+    email = request.POST.get('email')
 
     if idade == '':
+        return redirect('register_aluno')
+    if Aluno.objects.filter(email=email).exists():
+        messages.error(request, 'E-mail já cadastrado')
         return redirect('register_aluno')
     else:
         if form.is_valid():
@@ -63,11 +69,40 @@ def register_admin(request):
             else:
                 messages.error(request, 'Preencha os campos corretamente')
     else:
-        # Se for uma requisição GET, inicialize o formulário com dados da sessão, se existirem
         form = RegisterAdmin(request.session.get('register_admin', None))
     
-    return render(request, 'register_admin.html', {
+    return render(request, 'register/register_admin.html', {
         'usuario_logado': request.session.get('usuario'),
         'usuario_id': usuario,
         'form': form
+    })
+
+def boletim(request):
+    usuario = Usuarios.objects.get(id=request.session['usuario'])
+    aluno = Aluno.objects.all()
+
+    return render(request, 'aluno/boletim.html', {
+        'aluno': aluno,
+        'usuario_logado': request.session.get('usuario'),
+        'usuario_id': usuario,
+    })
+
+def update_aluno(request, id):
+    usuario = Usuarios.objects.get(id=request.session['usuario'])
+    aluno = Aluno.objects.get(id=id)
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST, instance=aluno)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Dados atualizados com sucesso')
+            return redirect('update_aluno', id=id)
+    else:
+        form = RegisterForm(instance=aluno)
+
+    return render(request, 'update/update_aluno.html', {
+        'aluno': aluno,
+        'form': form,
+        'usuario_logado': request.session.get('usuario'),
+        'usuario_id': usuario,
     })
